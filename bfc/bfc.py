@@ -94,9 +94,14 @@ class N4BiasFieldCorrection(ChrisApp):
         """
 
         input_files = glob(path.join(options.inputdir, options.inputPathFilter))
-        conv = self.parse_convergence(options.convergence)
 
-        print(Gstr_title)
+        try:
+            conv = self.parse_convergence(options.convergence)
+        except ConvergenceInputParseError as e:
+            print(e)
+            sys.exit(1)
+
+        print(Gstr_title, flush=True)
         logging.getLogger().setLevel(logging.INFO)
 
         def process(filename: str) -> str:
@@ -129,7 +134,4 @@ class N4BiasFieldCorrection(ChrisApp):
         }
 
     def show_man_page(self):
-        """
-        Print the app's man page.
-        """
-        print(Gstr_synopsis)
+        self.print_help()

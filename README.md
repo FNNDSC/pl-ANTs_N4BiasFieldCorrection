@@ -30,3 +30,5 @@ docker run --rm -u $(id -u):$(id -g) --userns=host     \
     fnndsc/pl-ants_n4biasfieldcorrection:0.2.7.1 bfc   \
     /incoming /outgoing
 ```
+
+[![chrisstore.co](docs/badge.png)](https://chrisstore.co/plugin/77)

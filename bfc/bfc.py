@@ -18,13 +18,15 @@ import ants
 
 
 Gstr_title = r"""
-  ___   _   _ _____     _   _   ___  ______ _            ______ _      _     _   _____                          _   _
- / _ \ | \ | |_   _|   | \ | | /   | | ___ (_)           |  ___(_)    | |   | | /  __ \                        | | (_)
-/ /_\ \|  \| | | |___  |  \| |/ /| | | |_/ /_  __ _ ___  | |_   _  ___| | __| | | /  \/ ___  _ __ _ __ ___  ___| |_ _  ___  _ __
-|  _  || . ` | | / __| | . ` / /_| | | ___ \ |/ _` / __| |  _| | |/ _ \ |/ _` | | |    / _ \| '__| '__/ _ \/ __| __| |/ _ \| '_ \
-| | | || |\  | | \__ \ | |\  \___  | | |_/ / | (_| \__ \ | |   | |  __/ | (_| | | \__/\ (_) | |  | | |  __/ (__| |_| | (_) | | | |
-\_| |_/\_| \_/ \_/___/ \_| \_/   |_/ \____/|_|\__,_|___/ \_|   |_|\___|_|\__,_|  \____/\___/|_|  |_|  \___|\___|\__|_|\___/|_| |_|
+  ___   _   _ _____     _   _   ___   _____                          _   _
+ / _ \ | \ | |_   _|   | \ | | /   | /  __ \                        | | (_)
+/ /_\ \|  \| | | |___  |  \| |/ /| | | /  \/ ___  _ __ _ __ ___  ___| |_ _  ___  _ __
+|  _  || . ` | | / __| | . ` / /_| | | |    / _ \| '__| '__/ _ \/ __| __| |/ _ \| '_ \
+| | | || |\  | | \__ \ | |\  \___  | | \__/\ (_) | |  | | |  __/ (__| |_| | (_) | | | |
+\_| |_/\_| \_/ \_/___/ \_| \_/   |_/  \____/\___/|_|  |_|  \___|\___|\__|_|\___/|_| |_|
 """
+
+logger = logging.getLogger(__name__)
 
 
 class ConvergenceInputParseError(Exception):
@@ -92,9 +94,6 @@ class N4BiasFieldCorrection(ChrisApp):
         """
         Define the code to be run by this plugin app.
         """
-
-        input_files = glob(path.join(options.inputdir, options.inputPathFilter))
-
         try:
             conv = self.parse_convergence(options.convergence)
         except ConvergenceInputParseError as e:
@@ -102,7 +101,10 @@ class N4BiasFieldCorrection(ChrisApp):
             sys.exit(1)
 
         print(Gstr_title, flush=True)
-        logging.getLogger().setLevel(logging.INFO)
+        logger.setLevel(logging.INFO)
+
+        input_files = glob(path.join(options.inputdir, options.inputPathFilter))
+        logger.info('%d files to process.', len(input_files))
 
         def process(filename: str) -> str:
             img = ants.image_read(filename)
@@ -110,10 +112,12 @@ class N4BiasFieldCorrection(ChrisApp):
 
             output = path.join(options.outputdir, path.basename(filename))
             img.to_file(output)
-            logging.info(output)
+            logger.info(output)
             return output
 
-        with ThreadPoolExecutor(max_workers=len(os.sched_getaffinity(0))) as pool:
+        nproc = len(os.sched_getaffinity(0))
+        logger.info('Using %d threads.', nproc)
+        with ThreadPoolExecutor(max_workers=nproc) as pool:
             pool.map(process, input_files)
 
     @staticmethod

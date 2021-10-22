@@ -6,7 +6,7 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.md')) as f:
 
 setup(
     name             = 'ants_n4biasfieldcorrection',
-    version          = '0.2.7.1',
+    version          = '0.2.7.2',
     description      = 'ANTs N4 Bias Field Correction',
     long_description = readme,
     author           = 'FNNDSC',

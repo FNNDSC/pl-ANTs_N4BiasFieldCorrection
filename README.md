@@ -1,4 +1,8 @@
-# N4 Bias Field Correction
+# Deprecated: Please use [pl-N4BiasFieldCorrection](https://github.com/FNNDSC/pl-N4BiasFieldCorrection)
+
+https://github.com/FNNDSC/pl-N4BiasFieldCorrection
+
+## N4 Bias Field Correction
 
 [![Version](https://img.shields.io/docker/v/fnndsc/pl-ants_n4biasfieldcorrection)](https://hub.docker.com/r/fnndsc/pl-ants_n4biasfieldcorrection/tags?page=1&ordering=last_updated)
 [![MIT License](https://img.shields.io/github/license/FNNDSC/pl-ANTs_N4BiasFieldCorrection)](https://github.com/FNNDSC/pl-ANTs_N4BiasFieldCorrection/blob/master/LICENSE)
